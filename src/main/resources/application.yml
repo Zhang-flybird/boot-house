@@ -10,7 +10,7 @@ spring:
     username: root
     password: etoak
     hikari:
-      maximum-pool-size: 10
+      maximum-pool-size: 50
 
   thymeleaf:
     cache: false
