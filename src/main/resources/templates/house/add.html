@@ -103,5 +103,87 @@
     </form>
     <script th:src="@{/lib/js/jquery/jquery.min.js}"></script>
     <script th:src="@{/lib/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:inline="javascript">
+        //定义contextPath
+        const path = [[${#request.getContextPath()}]];
+        const emptyOption = "<option value=''>--请选择--</option>"
+        $(function () {
+            //加载省
+            House.queryArea('province');
+
+            //给省的下拉框添加change事件
+            $('#province').change(function () {
+                //切换省的时候将市和区的下拉框清空
+                $('#city').html(emptyOption);
+                $('#area').html(emptyOption);
+                //拿到下拉框的value值
+               if(this.value){
+                   House.queryArea('city', this.value);
+               }
+            });
+
+            //给市下面的区添加change事件
+            $('#city').change(function () {
+                $('#area').html(emptyOption);
+                if(this.value){
+                    House.queryArea('area',this.value);
+                }
+            });
+
+            //加载租赁方式朝向户型等字典数据
+            House.queryDict('rent_mode');
+            House.queryDict('orientation');
+            House.queryDict('house_type');
+        });
+        //定义一个House对象，包含查询字典列表数据的接口
+        let House = {
+            /**
+             * 查询省市区级联关系
+             * pid为父id 如果查省，pid = 0
+             * documentId为这个dom元素（这里是select下拉列表框）挂载救过
+             */
+            queryArea:function(documentId,pid){
+                pid = pid || 0;
+                $.ajax({
+                    url:path + "/area/queryByPid",
+                    type:'GET',
+                    data:'pid=' + pid,
+                    dataType:'json',
+                    success:function (res) {
+                       let options = "<option value=''>--请选择--</option>"
+                        for(let  area of res){
+                            options+="<option value='"+area.id+"'>"
+                                    +area.name
+                                    +"</option>>"
+                        }
+                        //给省市区的下拉列表框赋值
+                        $("#" + documentId).html(options);
+                    }
+                });
+            },
+            /**
+             * 查询租赁方式。户型和朝向
+             * @param groupId
+             */
+            queryDict:function (groupId) {
+                $.ajax({
+                   url: path+'/dict/'+ groupId,
+                   type:'GET',
+                   data:'',
+                   dataType:'json',
+                   success:function (res) {
+                       let options = "<option value=''>--请选择--</option>";
+                       $.each(res,function (index,dict) {
+                            options +="<option value='"+dict.value +"'>"
+                                    +dict.name
+                                    +"</option>"
+                       });
+                       //为租赁方式，户型，朝向赋值
+                       $('#' + groupId).html(options);
+                   }
+                });
+            }
+        };
+    </script>
 </body>
 </html>
