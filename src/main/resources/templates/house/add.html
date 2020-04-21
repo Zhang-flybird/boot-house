@@ -18,11 +18,12 @@
     <form th:action="@{/house/add}"
           method="post"
           enctype="multipart/form-data"
+          id="addForm"
           class="form-horizontal" role="form">
         <!-- 1.省 -->
         <div class="form-group">
             <label for="province" class="col-sm-2 control-label">所在省</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 input-group">
                 <select id="province" name="province" class="form-control">
                     <option value="">--请选择--</option>
                 </select>
@@ -31,7 +32,7 @@
         <!-- 2.市 -->
         <div class="form-group">
             <label for="city" class="col-sm-2 control-label">所在市</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 input-group">
                 <select id="city" name="city" class="form-control">
                     <option value="">--请选择--</option>
                 </select>
@@ -40,7 +41,7 @@
         <!-- 3.区县 -->
         <div class="form-group">
             <label for="area" class="col-sm-2 control-label">所在区县</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 input-group">
                 <select id="area" name="area" class="form-control">
                     <option value="">--请选择--</option>
                 </select>
@@ -49,7 +50,7 @@
         <!-- 4.租赁方式 -->
         <div class="form-group">
             <label for="rent_mode" class="col-sm-2 control-label">租赁方式</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 input-group">
                 <select id="rent_mode" name="rentMode" class="form-control">
                     <option value="">--请选择--</option>
                 </select>
@@ -58,7 +59,7 @@
         <!-- 5.朝向 -->
         <div class="form-group">
             <label for="orientation" class="col-sm-2 control-label">朝向</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 input-group">
                 <select id="orientation" name="orientation" class="form-control">
                     <option value="">--请选择--</option>
                 </select>
@@ -67,7 +68,7 @@
         <!-- 6.户型 -->
         <div class="form-group">
             <label for="house_type" class="col-sm-2 control-label">户型</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 input-group">
                 <select id="house_type" name="houseType" class="form-control">
                     <option value="">--请选择--</option>
                 </select>
@@ -76,21 +77,21 @@
         <!-- 7. 租金 -->
         <div class="form-group">
             <label for="rental" class="col-sm-2 control-label">租金</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 input-group">
                 <input type="number" name="rental" id="rental" class="form-control">
             </div>
         </div>
         <!-- 8. 地址 -->
         <div class="form-group">
             <label for="address" class="col-sm-2 control-label">地址</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 input-group">
                 <input type="text" name="address" id="address" class="form-control" placeholder="详细地址">
             </div>
         </div>
         <!-- 9. 图片 -->
         <div class="form-group">
             <label for="address" class="col-sm-2 control-label">房屋照片</label>
-            <div class="col-sm-3">
+            <div class="col-sm-3 input-group">
                 <input type="file" name="file" id="file" class="form-control">
             </div>
         </div>
@@ -103,6 +104,9 @@
     </form>
     <script th:src="@{/lib/js/jquery/jquery.min.js}"></script>
     <script th:src="@{/lib/bootstrap/js/bootstrap.min.js}"></script>
+    <!--jquery校验插件-->
+    <script th:src="@{/lib/js/jquery/validate/jquery.validate.min.js}"></script>
+    <script th:src="@{/lib/js/jquery/validate/messages_zh.min.js}"></script>
     <script th:inline="javascript">
         //定义contextPath
         const path = [[${#request.getContextPath()}]];
@@ -134,6 +138,9 @@
             House.queryDict('rent_mode');
             House.queryDict('orientation');
             House.queryDict('house_type');
+
+            //校验
+            House.validateForm();
         });
         //定义一个House对象，包含查询字典列表数据的接口
         let House = {
@@ -181,6 +188,46 @@
                        //为租赁方式，户型，朝向赋值
                        $('#' + groupId).html(options);
                    }
+                });
+            },
+            //校验表单项
+            validateForm:function () {
+                $('#addForm').validate({
+                    //开启debug值进行校验不提交表单
+                    debug:false,
+
+                    //submitHandler:function(form){
+                    //    alert("校验成功")
+                    // },
+                    //修改提示信息的元素类型，默认是<label>修改成<div>
+                    errorElement: 'div',
+                    // errorEle:错误提示消息的dom元素
+                    errorPlacement:function(errorEle,validateEle){
+                        errorEle.addClass('input-group-addon');
+                        //将错误信息追加到校验元素的父元素上
+                        errorEle.appendTo(validateEle.parent());
+                    },
+                    //检测成功后执行
+                    success:function(msgElement){
+                        msgElement.addClass('input-group-addon').text('ok');
+                    },
+
+                   //检验规则：rules
+                   rules:{
+                       province:'required',//对name属性province表单进行验证
+                       address:{
+                         required: true, //地址必填
+                           maxlength: 10//不能超过10个字符
+                       },
+                   },
+                   //检验失败后的消息：messages
+                   messages:{
+                       province: '必填项',
+                       address:{
+                           required: '必填项',
+                           maxlength: '10个字符以内'
+                       },
+                   },
                 });
             }
         };
