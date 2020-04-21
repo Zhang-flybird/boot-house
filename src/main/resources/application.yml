@@ -22,3 +22,8 @@ mybatis:
 
 pagehelper:
   reasonable: true
+
+# 打印sql
+logging:
+  level:
+    com.etoak.mapper: DEBUG

@@ -1,0 +1,107 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>添加房源</title>
+    <link th:href="@{/lib/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 添加房源表单 -->
+    <form th:action="@{/house/add}"
+          method="post"
+          enctype="multipart/form-data"
+          class="form-horizontal" role="form">
+        <!-- 1.省 -->
+        <div class="form-group">
+            <label for="province" class="col-sm-2 control-label">所在省</label>
+            <div class="col-sm-3">
+                <select id="province" name="province" class="form-control">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+        </div>
+        <!-- 2.市 -->
+        <div class="form-group">
+            <label for="city" class="col-sm-2 control-label">所在市</label>
+            <div class="col-sm-3">
+                <select id="city" name="city" class="form-control">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+        </div>
+        <!-- 3.区县 -->
+        <div class="form-group">
+            <label for="area" class="col-sm-2 control-label">所在区县</label>
+            <div class="col-sm-3">
+                <select id="area" name="area" class="form-control">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+        </div>
+        <!-- 4.租赁方式 -->
+        <div class="form-group">
+            <label for="rent_mode" class="col-sm-2 control-label">租赁方式</label>
+            <div class="col-sm-3">
+                <select id="rent_mode" name="rentMode" class="form-control">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+        </div>
+        <!-- 5.朝向 -->
+        <div class="form-group">
+            <label for="orientation" class="col-sm-2 control-label">朝向</label>
+            <div class="col-sm-3">
+                <select id="orientation" name="orientation" class="form-control">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+        </div>
+        <!-- 6.户型 -->
+        <div class="form-group">
+            <label for="house_type" class="col-sm-2 control-label">户型</label>
+            <div class="col-sm-3">
+                <select id="house_type" name="houseType" class="form-control">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
+        </div>
+        <!-- 7. 租金 -->
+        <div class="form-group">
+            <label for="rental" class="col-sm-2 control-label">租金</label>
+            <div class="col-sm-3">
+                <input type="number" name="rental" id="rental" class="form-control">
+            </div>
+        </div>
+        <!-- 8. 地址 -->
+        <div class="form-group">
+            <label for="address" class="col-sm-2 control-label">地址</label>
+            <div class="col-sm-3">
+                <input type="text" name="address" id="address" class="form-control" placeholder="详细地址">
+            </div>
+        </div>
+        <!-- 9. 图片 -->
+        <div class="form-group">
+            <label for="address" class="col-sm-2 control-label">房屋照片</label>
+            <div class="col-sm-3">
+                <input type="file" name="file" id="file" class="form-control">
+            </div>
+        </div>
+        <!-- 10.添加按钮 -->
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-3">
+                <button type="submit" class="btn btn-primary">添加</button>
+            </div>
+        </div>
+    </form>
+    <script th:src="@{/lib/js/jquery/jquery.min.js}"></script>
+    <script th:src="@{/lib/bootstrap/js/bootstrap.min.js}"></script>
+</body>
+</html>
