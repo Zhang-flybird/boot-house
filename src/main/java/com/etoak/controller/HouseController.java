@@ -38,7 +38,7 @@ public class HouseController {
     @Autowired
     HouseService houseService;
     /**
-     * 跳转到添加页面
+     * 跳转到添加页面  
      * @return
      */
     @RequestMapping("/toAdd")
