@@ -215,6 +215,14 @@
                    //检验规则：rules
                    rules:{
                        province:'required',//对name属性province表单进行验证
+                       city:'required',
+                       area:'required',
+                       rentMode:'required',
+                       rental:{
+                           required:true,
+                           positiveInt:true,
+                           max:100000
+                       },
                        address:{
                          required: true, //地址必填
                            maxlength: 10//不能超过10个字符
@@ -223,12 +231,29 @@
                    //检验失败后的消息：messages
                    messages:{
                        province: '必填项',
+                       city:'必填项',
+                       area:'必填项',
+                       rentMode:'必填项',
+                       rental: {
+                           required:'必填项',
+                           positiveInt:'必须是大于0的整数',
+                           max:'最大10w'
+                       },
                        address:{
                            required: '必填项',
                            maxlength: '10个字符以内'
                        },
                    },
                 });
+
+                /**
+                 * 自定义检验规则
+                 * $.validator.addMethod(校验规则名称，校验方法，默认的提示消息)
+                 */
+                $.validator.addMethod('positiveInt',function (value,element) {
+                    let reg = /^\+?[1-9]\d*$/;
+                    return this.optional(element) || (reg.test(value));
+                },'必须是大于0的正整数');
             }
         };
     </script>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.etoak.mapper.HouseMapper">
+
+    <insert id="addHouse" parameterType="House">
+        INSERT INTO t_boot_house(
+                    province,
+                    city,
+                    area,
+                    area_name,
+                    rent_mode,
+                    house_type,
+                    orientation,
+                    rental,
+                    address,
+                    pic,
+                    publish_time
+        )VALUES(
+                    #{province},
+                    #{city},
+                    #{area},
+                    #{areaName},
+                    #{rentMode},
+                    #{houseType},
+                    #{orientation},
+                    #{rental},
+                    #{address},
+                    #{pic},
+                    NOW()
+        )
+    </insert>
+
+</mapper>
