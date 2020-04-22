@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class HouseController {
 
     /**
-     * 跳转到添加页面
+     * 跳转到添加页面  
      * @return
      */
     @RequestMapping("/toAdd")
