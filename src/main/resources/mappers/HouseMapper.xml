@@ -32,4 +32,26 @@
         )
     </insert>
 
+    <select id="queryList" parameterType="HouseVo" resultType="HouseVo">
+        SELECT t.id,
+			t.province,
+			t.city,
+			t.area,
+			t.area_name AS areaName,
+			t.rent_mode AS rentMode,
+			t2.name as rentModeName,
+			t.house_type AS houseType,
+			t3.name as houseTypeName,
+			t.orientation,
+			t4.name as orientationName,
+			t.rental,
+			t.address,
+			t.pic,
+			DATE_FORMAT(publish_time,'%Y -%m-%d %H:%i:%s') AS publishTime
+        FROM t_boot_house t
+        LEFT JOIN t_springmvc_dict t2 ON t.rent_mode = t2.`value` AND t2.group_id = 'rent_mode'
+        LEFT JOIN t_springmvc_dict t3 ON t.house_type = t3.`value` AND t3.group_id = 'house_type'
+        LEFT JOIN t_springmvc_dict t4 ON t.orientation = t4.`value` AND t4.group_id = 'orientation'
+
+    </select>
 </mapper>
