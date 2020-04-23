@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link th:href="@{/lib/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+        <link th:href="@{/lib/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet">
+        <title>房源列表</title>
+    </head>
+    <body>
+
+    <!--查询区域-->
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-primary">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        查询条件
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form">
+                        <!--所在省-->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">所在省</label>
+                            <div class="col-md-2">
+                                <select id="province" name="province" class="form-control">
+                                    <option value="">--请选择--</option>
+                                </select>
+                            </div>
+                            <!--所在市-->
+                            <label class="col-md-1 control-label">所在市</label>
+                            <div class="col-md-2">
+                                <select id="city" name="city" class="form-control">
+                                    <option value="">--请选择--</option>
+                                </select>
+                            </div>
+                            <!--所在区-->
+                            <label class="col-md-1 control-label">所在区</label>
+                            <div class="col-md-2">
+                                <select id="area" name="area" class="form-control">
+                                    <option value="">--请选择--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!--租赁方式，单选框-->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">租赁方式</label>
+                            <div class="col-md-2" id="rent_mode">
+                                <label class="radio-inline">
+                                    <input type="radio" name="rentMode" value="" checked> 不限
+                                </label>
+                            </div>
+                        </div>
+                        <!--租金范围-->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">租金</label>
+                            <div class="col-md-11" >
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="rental" value="100-1000"> <=1000元
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="rental" value="1000-1500"> 1000~1500元
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="rental" value="1500-2500"> 1500~2500元
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="rental" value="2500-5000"> 2500~5000元
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="rental" value="5000-10000"> >5000元
+                                </label>
+                            </div>
+                        </div>
+                        <!--户型-->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">户型</label>
+                            <div class="col-md-6" id="house_type">
+
+                            </div>
+                        </div>
+                        <!--朝向-->
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">朝向</label>
+                            <div class="col-md-6" id="orientation">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-3">
+                                <button id="queryBtn" type="button" class="btn btn-primary">查询</button>
+                                <button type="reset" class="btn btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--展示房源列表-->
+    <table id="listTable"></table>
+
+    <script th:src="@{/lib/js/jquery/jquery.min.js}" type="text/javascript"></script>
+    <script th:src="@{/lib/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+    <script th:src="@{/lib/bootstrap-table/bootstrap-table.min.js}" type="text/javascript"></script>
+    <script th:src="@{/lib/bootstrap-table/bootstrap-table-zh-CN.min.js}" type="text/javascript"></script>
+    <script th:inline="javascript" type="text/javascript">
+        const path = [[${#request.getContextPath()}]];
+        const areaOption = "<option value=''>--请选择--</option>";
+        $(function () {
+            house.queryList();
+            $('#queryBtn').click(function () {
+                $('#listTable').bootstrapTable('refresh')
+            });
+            //查询区域
+            house.queryArea('province',0);
+            $('#province').change(function () {
+                $('#city').html(areaOption);
+                $('#area').html(areaOption);
+                if(this.value){
+                    house.queryArea('city',this.value);
+                }
+            });
+            $('#city').change(function () {
+                $('#area').html(areaOption);
+                if(this.value){
+                    house.queryArea('area',this.value);
+                }
+            });
+            //查询租赁方式
+            house.queryRentMode();
+            //查询户型和朝向
+            house.getQueryPanelDict('house_type');
+            house.getQueryPanelDict('orientation');
+        });
+
+        let house = {
+            queryList:function () {
+                $('#listTable').bootstrapTable({
+                    url:path + '/house/list',
+                    pagination: true,
+                    sidePagination: 'server', //服务端分页
+                    pageNumber: 1,
+                    pageSize: 2,
+                    pageList: [2,4,10,20,30], //每页显示多少条
+                    queryParamsType: 'undefined',
+                    paginationPreText: '上一页',
+                    paginationNextText: '下一页',
+                    queryParams:function (params) {
+                        let rentMode = $("input[name='rentMode']:checked").val();
+                        //定义户型参数
+                        let houseTypeList = [];
+                        $("input[name='house_type']:checked").each(function () {
+                            //尾部添加元素
+                            houseTypeList.push(this.value);
+                        });
+                        //定义朝向
+                        let orientationList = [];
+                        $("input[name='orientation']:checked").each(function () {
+                            //头部添加元素
+                            orientationList.unshift(this.value);
+                        });
+
+                        //定义租金范围
+                        let rentalList = [];
+                        $('input[name="rental"]:checked').each(function () {
+                            rentalList.push(this.value);
+                        });
+
+                        let newParam = {
+                            pageNum: params.pageNumber,
+                            pageSize: params.pageSize,
+                            //省市区查询条件
+                            province: $('#province').val(),
+                            city: $('#city').val(),
+                            area: $('#area').val(),
+                            rentMode: rentMode,
+                            houseTypeList:houseTypeList.join(','), //将数组元素使用','分割拼接
+                            orientationList:orientationList.join(','),
+                            rentalList:rentalList.join(','), //rentalList[]:100-1000
+                        };
+                        return newParam;
+                    },
+                    columns:[
+                        {field:'id',title:'编号'},
+                        {field:'areaName',title:'所在区'},
+                        {field:'rentModeName',title:'方式'},
+                        {field:'rental',title:'租金(元)'},
+                        {field:'houseTypeName',title:'户型'},
+                        {field:'orientationName',title:'朝向'},
+                        {field:'address',title:'详细地址'},
+                        {field:'publishTime',title:'发布时间'},
+                        {title:'图片',formatter: function (value,row,index) {
+                                return "<img width='50px' height='50px' src='" + path + row.pic + "' />";
+                            }
+                        },
+                        {title:'操作',formatter:function (value,row,index) {
+                                return "更新";
+                            }
+                        },
+                    ]
+                });
+            },
+
+            queryArea:function (domId,pid) {
+                $.ajax({
+                    url:path + '/area/queryByPid',
+                    type:'GET',
+                    data:'pid=' + pid,
+                    dataType:'json',
+                    success:function (res) {
+                        let options = "<option value=''>--请选择--</option>";
+                        $.each(res,function(index,area){
+                            options += "<option value='"+ area.id + "'>"
+                                    +area.name
+                                    +"</option>";
+                        });
+                        $('#' + domId).html(options);
+                    },
+                });
+            },
+            //查询租赁方式
+            queryRentMode:function () {
+                $.ajax({
+                    url:path + '/dict/rent_mode',
+                    type:'GET',
+                    data:'',
+                    dataType:'json',
+                    success:function (res) {
+                        let radios = "";
+                        for(let i in res){
+                            let showName = res[i].name;
+                            let radioValue = res[i].value;
+                            radios +="<label class='radio-inline'>"
+                                   +"<input type='radio' name='rentMode' value='" + radioValue + "'>" +showName
+                                   +"</label>";
+                        }
+                        $('#rent_mode').append(radios);
+                    }
+                })
+            },
+            //获取查询面板的字典项：户型和朝向
+            //这里的groupId也作为操作dom的Id
+            getQueryPanelDict:function (groupId) {
+                $.ajax({
+                    url:path + '/dict/' + groupId,
+                    type:'GET',
+                    data:'',
+                    dataType:'json',
+                    success:function (res) {
+                        let checkboxStr = '';
+                        $.each(res,function (index,dict) {
+                            checkboxStr += "<label class='checkbox-inline'>"
+                                        + "<input type='checkbox' name='" +groupId+"' value='" + dict.value+"'>"
+                                        + dict.name
+                                        +"</label>";
+                        });
+                        $('#' + groupId).html(checkboxStr);
+                    }
+                });
+            },
+
+
+
+        }
+    </script>
+    </body>
+</html>

@@ -108,8 +108,19 @@ public class HouseController {
     public Page<HouseVo> queryList(
             @RequestParam(required = false,defaultValue = "1") int pageNum,
             @RequestParam(required = false,defaultValue = "10") int pageSize,
-            HouseVo houseVo){
-       log.info("pageNum -{},pageSize -{},houseVo -{}",pageNum,pageSize,houseVo);
-        return houseService.queryList(pageNum,pageSize,houseVo);
+            HouseVo houseVo,
+            @RequestParam(value = "rentalList",required = false) String[] rentalList){
+            //@RequestParam("houseTypeList[]")String houseList ){
+       log.info("pageNum -{},pageSize -{},houseVo -{},rentalList -{}",pageNum,pageSize,houseVo,rentalList);
+        return houseService.queryList(pageNum,pageSize,houseVo,rentalList);
+    }
+
+    /**
+     * 跳转到列表页面
+     * @return
+     */
+    @GetMapping("/toList")
+    public String toList(){
+        return "house/list";
     }
 }
