@@ -105,6 +105,104 @@
     <!--展示房源列表-->
     <table id="listTable"></table>
 
+    <!--编辑房源-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">编辑房源</h4>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/house/update}"
+                          method="post"
+                          id="updateForm"
+                          class="form-horizontal" role="form">
+
+                        <!-- id隐藏域：用于更新房源 -->
+                        <input type="hidden" id="update_house_id" name="id">
+
+                        <!-- 隐藏域：将post请求转成put请求 -->
+                        <input type="hidden" name="_method" value="put">
+
+                        <!-- 1.省 -->
+                        <div class="form-group">
+                            <label for="update_province" class="col-sm-2 control-label">所在省</label>
+                            <div class="col-sm-3 input-group">
+                                <select id="update_province" name="province" class="form-control">
+                                    <option value="">--请选择--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 2.市 -->
+                        <div class="form-group">
+                            <label for="update_city" class="col-sm-2 control-label">所在市</label>
+                            <div class="col-sm-3 input-group">
+                                <select id="update_city" name="city" class="form-control">
+                                    <option value="">--请选择--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 3.区县 -->
+                        <div class="form-group">
+                            <label for="update_area" class="col-sm-2 control-label">所在区县</label>
+                            <div class="col-sm-3 input-group">
+                                <select id="update_area" name="area" class="form-control">
+                                    <option value="">--请选择--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 4.租赁方式 -->
+                        <div class="form-group">
+                            <label for="update_rent_mode" class="col-sm-2 control-label">租赁方式</label>
+                            <div class="col-sm-3 input-group">
+                                <select id="update_rent_mode" name="rentMode" class="form-control">
+                                    <option value="">--请选择--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 5.朝向 -->
+                        <div class="form-group">
+                            <label for="update_orientation" class="col-sm-2 control-label">朝向</label>
+                            <div class="col-sm-3 input-group">
+                                <select id="update_orientation" name="orientation" class="form-control">
+                                    <option value="">--请选择--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 6.户型 -->
+                        <div class="form-group">
+                            <label for="update_house_type" class="col-sm-2 control-label">户型</label>
+                            <div class="col-sm-3 input-group">
+                                <select id="update_house_type" name="houseType" class="form-control">
+                                    <option value="">--请选择--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 7. 租金 -->
+                        <div class="form-group">
+                            <label for="update_rental" class="col-sm-2 control-label">租金</label>
+                            <div class="col-sm-3 input-group">
+                                <input type="number" name="rental" id="update_rental" class="form-control">
+                            </div>
+                        </div>
+                        <!-- 8. 地址 -->
+                        <div class="form-group">
+                            <label for="update_address" class="col-sm-2 control-label">地址</label>
+                            <div class="col-sm-3 input-group">
+                                <input type="text" name="address" id="update_address" class="form-control">
+                            </div>
+                        </div>
+                        <!-- 9.关闭和更新按钮 -->
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-3">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <button type="submit" class="btn btn-primary">更新</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
     <script th:src="@{/lib/js/jquery/jquery.min.js}" type="text/javascript"></script>
     <script th:src="@{/lib/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
     <script th:src="@{/lib/bootstrap-table/bootstrap-table.min.js}" type="text/javascript"></script>
@@ -137,6 +235,24 @@
             //查询户型和朝向
             house.getQueryPanelDict('house_type');
             house.getQueryPanelDict('orientation');
+
+            house.queryArea('update_province',0);
+            house.queryUpdateModalDict('rent_mode');
+            house.queryUpdateModalDict('house_type');
+            house.queryUpdateModalDict('orientation');
+            $('#update_province').change(function() {
+                $('#update_city').html(areaOption);
+                $('#update_area').html(areaOption);
+                if(this.value) {
+                    house.queryArea('update_city', this.value);
+                }
+            });
+            $('#update_city').change(function() {
+                $('#update_area').html(areaOption);
+                if(this.value) {
+                    house.queryArea('update_area', this.value);
+                }
+            });
         });
 
         let house = {
@@ -146,8 +262,8 @@
                     pagination: true,
                     sidePagination: 'server', //服务端分页
                     pageNumber: 1,
-                    pageSize: 2,
-                    pageList: [2,4,10,20,30], //每页显示多少条
+                    pageSize: 5,
+                    pageList: [5,10,20,30], //每页显示多少条
                     queryParamsType: 'undefined',
                     paginationPreText: '上一页',
                     paginationNextText: '下一页',
@@ -200,9 +316,11 @@
                             }
                         },
                         {title:'操作',formatter:function (value,row,index) {
-                                return "更新";
-                            }
-                        },
+                            let updateBtn = "<button id='updateBtn' class='btn btn-primary' type='button' data-toggle='modal' data-target='#myModal'>更新</button>";
+                            return updateBtn;
+                            },
+                            events: houseEvent //window事件
+                        }
                     ]
                 });
             },
@@ -213,6 +331,7 @@
                     type:'GET',
                     data:'pid=' + pid,
                     dataType:'json',
+                    async: false,
                     success:function (res) {
                         let options = "<option value=''>--请选择--</option>";
                         $.each(res,function(index,area){
@@ -264,9 +383,44 @@
                     }
                 });
             },
+            //查询更新静态字典项
+            queryUpdateModalDict:function (groupId) {
+                $.ajax({
+                    url:path + '/dict/' + groupId,
+                    type: 'GET',
+                    data:'',
+                    dateType:'json',
+                    success:function (res) {
+                        let options = "<option value=''>--请选择--</option>";
+                        $.each(res, function (index, dict) {
+                            options += "<option value='" + dict.value + "'>"
+                                + dict.name
+                                + "</option>";
+                        });
+                        $('#update_' + groupId).html(options);
+                    }
+                });
+            }
 
+        }
 
+        window.houseEvent = {
+            'click #updateBtn':function (event,value,row,index) {
+                $('#update_house_id').val(row.id);
+                $('#update_province').val(row.province);
+                //根据所在省加载所有市
+                house.queryArea('update_city',row.province); //异步请求
+                $('#update_city').val(row.city);
 
+                house.queryArea('update_area',row.city);
+                $('#update_area').val(row.area);
+
+                $('#update_rent_mode').val(row.rentMode);
+                $('#update_house_type').val(row.houseType);
+                $('#update_orientation').val(row.orientation);
+                $('#update_rental').val(row.rental);
+                $('#update_address').val(row.address);
+            },
         }
     </script>
     </body>

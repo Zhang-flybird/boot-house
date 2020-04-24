@@ -86,4 +86,38 @@
         </where>
         ORDER BY t.publish_time
     </select>
+
+    <update id="updateHouse" parameterType="house">
+        UPDATE t_boot_house
+        <set>
+            <if test="province !=null and province !=0">
+                province = #{province},
+            </if>
+            <if test="city != null and city != 0 ">
+                city = #{city},
+            </if>
+            <if test="area != null and area != 0 ">
+                area = #{area},
+            </if>
+            <if test="rentMode != null and rentMode != '' ">
+                rent_mode = #{rentMode},
+            </if>
+            <if test="houseType != null and houseType != '' ">
+                house_type = #{houseType},
+            </if>
+            <if test="orientation != null and orientation != '' ">
+                orientation = #{orientation},
+            </if>
+            <if test="rental != null and rental != 0 ">
+                rental = #{rental},
+            </if>
+            <if test="address != null and address != '' ">
+                address = #{address},
+            </if>
+            <if test="areaName != null and areaName !=''">
+                area_name = #{areaName},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
 </mapper>
