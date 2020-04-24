@@ -16,4 +16,6 @@ public interface HouseService {
      * @return
      */
     int updateHouse(House house);
+
+    int deleteById(int id);
 }

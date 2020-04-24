@@ -120,4 +120,9 @@
         </set>
         WHERE id = #{id}
     </update>
+
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM  t_boot_house
+        WHERE id = #{value}
+    </delete>
 </mapper>

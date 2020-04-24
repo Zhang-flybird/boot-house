@@ -202,6 +202,12 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+     <form id="delForm" method="post">
+           <input type="hidden" name="_method"  value="delete">
+     </form>
 
     <script th:src="@{/lib/js/jquery/jquery.min.js}" type="text/javascript"></script>
     <script th:src="@{/lib/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
@@ -317,7 +323,8 @@
                         },
                         {title:'操作',formatter:function (value,row,index) {
                             let updateBtn = "<button id='updateBtn' class='btn btn-primary' type='button' data-toggle='modal' data-target='#myModal'>更新</button>";
-                            return updateBtn;
+                            let deleteBtn = "<button id='deleteBtn' class='btn btn-danger' type='button'>删除</button>"
+                            return updateBtn + " "+ deleteBtn;
                             },
                             events: houseEvent //window事件
                         }
@@ -421,6 +428,12 @@
                 $('#update_rental').val(row.rental);
                 $('#update_address').val(row.address);
             },
+            'click #deleteBtn':function (event,value,row,index) {
+                let action = path + '/house/' + row.id;
+                if(confirm('确定要删除吗？')){
+                    $('#delForm').attr('action',action).submit();
+                }
+            }
         }
     </script>
     </body>
